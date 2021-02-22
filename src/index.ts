@@ -1,9 +1,10 @@
-import { CardIO, PropType, PropList, PropItem, PropOptions, WS } from '@casthub/types';
+import { CardIO, WS } from '@casthub/types';
 //
-import { Scene } from 'obs-websocket-js';
 
 
 export default class extends window.casthub.card.action {
+
+    ws: WS;
 
     constructor() {
         super();
@@ -36,7 +37,12 @@ export default class extends window.casthub.card.action {
      * @param {Object} input The output, if any, from the Trigger.
      */
     public async run(input: CardIO): Promise<void> {
-        // 
+        try {
+            await this.ws.send('SaveReplayBuffer');
+        } catch (err) {
+            window.casthub.notify('OBS Replay Buffer is not running. Unable to save replay');
+        }
+        
     }
 
 };
