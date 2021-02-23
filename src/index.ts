@@ -26,7 +26,13 @@ export default class extends window.casthub.card.action {
     public async mounted(): Promise<void> {
 
         const { id } = this.identity;
-        this.ws = await window.casthub.ws(id);
+
+        try {
+            this.ws = await window.casthub.ws(id);
+        } catch (err) {
+            console.error(err);
+            throw new Error('Unable to connect to OBS Web Socket');
+        }
 
         await super.mounted();
     }
@@ -39,6 +45,7 @@ export default class extends window.casthub.card.action {
     public async run(input: CardIO): Promise<void> {
         try {
             await this.ws.send('SaveReplayBuffer');
+            window.casthub.notify('OBS Replay Saved!');
         } catch (err) {
             window.casthub.notify('OBS Replay Buffer is not running. Unable to save replay');
         }
